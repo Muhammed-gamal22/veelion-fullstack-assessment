@@ -1,4 +1,6 @@
+
 const fs = require('node:fs/promises');
+const path = require('node:path');
 
 async function readJsonArray(filePath) {
   try {
@@ -8,22 +10,40 @@ async function readJsonArray(filePath) {
     }
 
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch (error) {
-    if (error.code === 'ENOENT') {
-      await fs.writeFile(filePath, '[]\n', 'utf-8');
-      return [];
+
+    if (!Array.isArray(parsed)) {
+      throw new Error(`Expected a JSON array in ${filePath}`);
     }
 
-    throw error;
+    return parsed;
+  } catch (error) {
+    if (error.code !== 'ENOENT') {
+      throw error;
+    }
+
+    await fs.mkdir(path.dirname(filePath), { recursive: true });
+    await fs.writeFile(filePath, '[]\n', 'utf-8');
+
+    return [];
   }
 }
 
 async function writeJsonArray(filePath, data) {
-  await fs.writeFile(filePath, `${JSON.stringify(data, null, 2)}\n`, 'utf-8');
+  if (!Array.isArray(data)) {
+    throw new TypeError('Data must be an array.');
+  }
+
+  await fs.mkdir(path.dirname(filePath), { recursive: true });
+
+  await fs.writeFile(
+    filePath,
+    `${JSON.stringify(data, null, 2)}\n`,
+    'utf-8'
+  );
 }
 
 module.exports = {
   readJsonArray,
   writeJsonArray,
 };
+

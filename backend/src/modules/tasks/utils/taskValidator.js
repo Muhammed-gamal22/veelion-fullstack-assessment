@@ -1,6 +1,9 @@
+
 const HttpError = require('../../../utils/httpError');
 
-const ALLOWED_FIELDS = ['title', 'completed'];
+const ALLOWED_FIELDS = ['title', 'status'];
+
+const ALLOWED_STATUSES = ['todo', 'in-progress', 'done'];
 
 function validatePayloadShape(payload) {
   if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
@@ -30,6 +33,7 @@ function normalizeTitleIfPresent(payload, normalized) {
   }
 
   const trimmedTitle = payload.title.trim();
+
   if (!trimmedTitle) {
     throw new HttpError(400, '"title" cannot be empty.');
   }
@@ -37,16 +41,22 @@ function normalizeTitleIfPresent(payload, normalized) {
   normalized.title = trimmedTitle;
 }
 
-function normalizeCompletedIfPresent(payload, normalized) {
-  if (!Object.hasOwn(payload, 'completed')) {
+function normalizeStatusIfPresent(payload, normalized) {
+  if (!Object.hasOwn(payload, 'status')) {
     return;
   }
 
-  if (typeof payload.completed !== 'boolean') {
-    throw new HttpError(400, '"completed" must be a boolean.');
+  if (
+    typeof payload.status !== 'string' ||
+    !ALLOWED_STATUSES.includes(payload.status)
+  ) {
+    throw new HttpError(
+      400,
+      '"status" must be one of: todo, in-progress, done.'
+    );
   }
 
-  normalized.completed = payload.completed;
+  normalized.status = payload.status;
 }
 
 function validateCreateTask(payload) {
@@ -54,15 +64,16 @@ function validateCreateTask(payload) {
   ensureNoUnknownFields(payload);
 
   const normalized = {};
+
   normalizeTitleIfPresent(payload, normalized);
-  normalizeCompletedIfPresent(payload, normalized);
+  normalizeStatusIfPresent(payload, normalized);
 
   if (!Object.hasOwn(normalized, 'title')) {
     throw new HttpError(400, '"title" is required.');
   }
 
-  if (!Object.hasOwn(normalized, 'completed')) {
-    normalized.completed = false;
+  if (!Object.hasOwn(normalized, 'status')) {
+    normalized.status = 'in-progressً';
   }
 
   return normalized;
@@ -73,11 +84,15 @@ function validateUpdateTask(payload) {
   ensureNoUnknownFields(payload);
 
   const normalized = {};
+
   normalizeTitleIfPresent(payload, normalized);
-  normalizeCompletedIfPresent(payload, normalized);
+  normalizeStatusIfPresent(payload, normalized);
 
   if (Object.keys(normalized).length === 0) {
-    throw new HttpError(400, 'Provide at least one updatable field.');
+    throw new HttpError(
+      400,
+      'Provide at least one updatable field.'
+    );
   }
 
   return normalized;
