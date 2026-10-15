@@ -6,7 +6,7 @@ export default function TasksPage() {
     <main className="stack">
       <nav>
         <Link href="/" className="button">
-          Back
+          ← Back
         </Link>
       </nav>
       <TaskDashboard />

@@ -35,16 +35,12 @@ async function getTaskById(taskId) {
 
 async function createTask(payload) {
   const tasks = await readJsonArray(TASKS_FILE_PATH);
-
   const newTask = buildTaskRecord({
     ...payload,
-    status: payload.status ?? "in-progress",
+    status: payload.status ?? "todo",
   });
-
   tasks.push(newTask);
-
   await writeJsonArray(TASKS_FILE_PATH, tasks);
-
   return newTask;
 }
 

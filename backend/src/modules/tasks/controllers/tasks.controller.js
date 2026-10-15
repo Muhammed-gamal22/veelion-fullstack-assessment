@@ -15,7 +15,6 @@ async function createTask(req, res) {
   const payload = req.body || {};
   const normalized = validateCreateTask(payload);
   const task = await tasksService.createTask(normalized);
-
   res.status(201).json({ data: task });
 }
 

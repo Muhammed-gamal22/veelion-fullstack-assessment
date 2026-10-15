@@ -1,7 +1,7 @@
 export type Task = {
   id: string;
   title: string;
-  completed: boolean;
+  status: "todo" | "in-progress" | "done";
   createdAt: string;
   updatedAt: string;
 };
@@ -27,4 +27,4 @@ export type ErrorResponse = {
   };
 };
 
-export type TaskFilter = "all" | "completed" | "pending";
+export type TaskFilter = "all" | "done" | "todo" | "in-progress";

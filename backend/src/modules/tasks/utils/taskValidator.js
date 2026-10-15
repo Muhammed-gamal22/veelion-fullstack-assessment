@@ -73,7 +73,7 @@ function validateCreateTask(payload) {
   }
 
   if (!Object.hasOwn(normalized, 'status')) {
-    normalized.status = 'in-progressً';
+    normalized.status = 'todo';
   }
 
   return normalized;

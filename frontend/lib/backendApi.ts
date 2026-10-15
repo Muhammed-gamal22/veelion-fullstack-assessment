@@ -33,14 +33,14 @@ export async function getTasksFromBackend(): Promise<Task[]> {
   }
 }
 
-export async function updateTaskInBackend(taskId: string, completed: boolean): Promise<Task> {
+export async function updateTaskInBackend(taskId: string, status: "todo" | "in_progress" | "done"): Promise<Task> {
   try {
     const response = await fetch(buildBackendUrl(`/tasks/${taskId}`), {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ completed }),
+      body: JSON.stringify({ status }),
       cache: "no-store",
     });
 
@@ -52,6 +52,28 @@ export async function updateTaskInBackend(taskId: string, completed: boolean): P
     return body.data;
   } catch (error) {
     throw new Error(error instanceof Error ? error.message : "Failed to update task.");
+  }
+}
+
+export async function createTaskInBackend(task: { title: string; status: "todo" | "in_progress" | "done" }): Promise<Task> {
+  try {
+    const response = await fetch(buildBackendUrl("/tasks"), {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(task),
+      cache: "no-store",
+    });
+
+    if (!response.ok) {
+      throw new Error(await parseError(response));
+    }
+
+    const body = (await response.json()) as TaskResponse;
+    return body.data;
+  } catch (error) {
+    throw new Error(error instanceof Error ? error.message : "Failed to create task.");
   }
 }
 
