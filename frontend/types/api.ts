@@ -28,3 +28,15 @@ export type ErrorResponse = {
 };
 
 export type TaskFilter = "all" | "done" | "todo" | "in-progress";
+
+
+
+export type ReportResponse = {
+  totalTasks: number;
+  tasksByStatus: {
+    todo: number;
+    "in-progress": number;
+    done: number;
+  };
+  recentActivityCount: number;
+} 

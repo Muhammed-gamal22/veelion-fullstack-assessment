@@ -30,9 +30,6 @@ export function TaskDashboard() {
   const handleToggle = (task: Task) => {
     updateTaskStatus(task.id, task.status === "done" ? "todo" : "done");
   };
-  const handleAddTask = () => {
-    setAddNewTaskModal(true);
-  };
 
   return (
     <>

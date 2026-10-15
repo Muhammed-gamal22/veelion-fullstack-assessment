@@ -1,6 +1,15 @@
+import Report from "@/components/TaskSummary/Report";
+import CustomLoader from "@/customs/CustomLoader";
+import { getReportsFromBackend } from "@/lib/backendApi";
+import { requestJson } from "@/utils";
 import Link from "next/link";
+import { Suspense } from "react";
 
-export default function ReportsPage() {
+export default async function ReportsPage() {
+
+
+    const reports = await getReportsFromBackend();
+
     return (
         <main className="stack">
             <nav>
@@ -55,13 +64,9 @@ export default function ReportsPage() {
                 className="card"
                 style={{ padding: "3rem 1.5rem", textAlign: "center" }}
             >
-                <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>🚧</div>
-                <h2 style={{ margin: "0 0 0.5rem", fontWeight: 700, fontSize: "1.1rem" }}>
-                    Coming Soon
-                </h2>
-                <p style={{ margin: 0, color: "var(--muted)", fontSize: "0.9rem" }}>
-                    Reports module is under development.
-                </p>
+                <Suspense fallback={<CustomLoader title="reports" />}>
+                    <Report />
+                </Suspense>
             </section>
         </main>
     );
