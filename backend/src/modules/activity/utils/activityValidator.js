@@ -60,20 +60,9 @@ function normalizeInfoIfPresent(payload, normalized) {
 function validateCreateActivity(payload) {
     validatePayloadShape(payload);
     ensureNoUnknownFields(payload);
-
     const normalized = {};
-
     normalizeActionIfPresent(payload, normalized);
     normalizeInfoIfPresent(payload, normalized);
-
-    if (!Object.hasOwn(normalized, 'action')) {
-        throw new HttpError(400, '"action" is required.');
-    }
-
-    if (!Object.hasOwn(normalized, 'info')) {
-        throw new HttpError(400, '"info" is required.');
-    }
-
     return normalized;
 }
 

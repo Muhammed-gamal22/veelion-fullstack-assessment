@@ -7,19 +7,27 @@ async function getAllActivity() {
   return readJsonArray(ACTIVITY_FILE_PATH);
 }
 
-async function createNewActivity(b) {
-  const list = await readJsonArray(ACTIVITY_FILE_PATH)
-  const one = {
+
+async function createNewActivity(data) {
+  const list = await readJsonArray(ACTIVITY_FILE_PATH);
+
+  const activity = {
     id: createId(),
-    action: b.action.trim(),
-    info: b.info.trim(),
     when: new Date().toISOString(),
   };
 
-  list.push(one);
+  if (Object.hasOwn(data, 'action')) {
+    activity.action = data.action;
+  }
+
+  if (Object.hasOwn(data, 'info')) {
+    activity.info = data.info;
+  }
+
+  list.push(activity);
   await writeJsonArray(ACTIVITY_FILE_PATH, list);
 
-  return one;
+  return activity;
 }
 
 module.exports = {
