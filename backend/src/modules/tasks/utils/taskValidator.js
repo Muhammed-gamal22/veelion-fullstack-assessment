@@ -79,6 +79,15 @@ function validateUpdateTask(payload) {
 
   normalizeTitleIfPresent(payload, normalized);
   normalizeCompletedIfPresent(payload, normalized);
+  if (
+    typeof normalized.title === 'string' &&
+    normalized.title.length < 2
+  ) {
+    throw new HttpError(
+      400,
+      '"title" must be at least 2 characters long.'
+    );
+  }
 
   if (Object.keys(normalized).length === 0) {
     throw new HttpError(
