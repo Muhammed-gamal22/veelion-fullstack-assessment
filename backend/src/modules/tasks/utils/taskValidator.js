@@ -1,9 +1,7 @@
 
 const HttpError = require('../../../utils/httpError');
 
-const ALLOWED_FIELDS = ['title', 'status'];
-
-const ALLOWED_STATUSES = ['todo', 'in-progress', 'done'];
+const ALLOWED_FIELDS = ['title', 'completed'];
 
 function validatePayloadShape(payload) {
   if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
@@ -41,22 +39,16 @@ function normalizeTitleIfPresent(payload, normalized) {
   normalized.title = trimmedTitle;
 }
 
-function normalizeStatusIfPresent(payload, normalized) {
-  if (!Object.hasOwn(payload, 'status')) {
+function normalizeCompletedIfPresent(payload, normalized) {
+  if (!Object.hasOwn(payload, 'completed')) {
     return;
   }
 
-  if (
-    typeof payload.status !== 'string' ||
-    !ALLOWED_STATUSES.includes(payload.status)
-  ) {
-    throw new HttpError(
-      400,
-      '"status" must be one of: todo, in-progress, done.'
-    );
+  if (typeof payload.completed !== 'boolean') {
+    throw new HttpError(400, '"completed" must be a boolean.');
   }
 
-  normalized.status = payload.status;
+  normalized.completed = payload.completed;
 }
 
 function validateCreateTask(payload) {
@@ -66,14 +58,14 @@ function validateCreateTask(payload) {
   const normalized = {};
 
   normalizeTitleIfPresent(payload, normalized);
-  normalizeStatusIfPresent(payload, normalized);
+  normalizeCompletedIfPresent(payload, normalized);
 
   if (!Object.hasOwn(normalized, 'title')) {
     throw new HttpError(400, '"title" is required.');
   }
 
-  if (!Object.hasOwn(normalized, 'status')) {
-    normalized.status = 'todo';
+  if (!Object.hasOwn(normalized, 'completed')) {
+    normalized.completed = false;
   }
 
   return normalized;
@@ -86,7 +78,7 @@ function validateUpdateTask(payload) {
   const normalized = {};
 
   normalizeTitleIfPresent(payload, normalized);
-  normalizeStatusIfPresent(payload, normalized);
+  normalizeCompletedIfPresent(payload, normalized);
 
   if (Object.keys(normalized).length === 0) {
     throw new HttpError(

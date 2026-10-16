@@ -33,14 +33,14 @@ export async function getTasksFromBackend(): Promise<Task[]> {
   }
 }
 
-export async function updateTaskInBackend(taskId: string, status: "todo" | "in_progress" | "done"): Promise<Task> {
+export async function updateTaskInBackend(taskId: string, completed: boolean): Promise<Task> {
   try {
     const response = await fetch(buildBackendUrl(`/tasks/${taskId}`), {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ status }),
+      body: JSON.stringify({ completed }),
       cache: "no-store",
     });
 

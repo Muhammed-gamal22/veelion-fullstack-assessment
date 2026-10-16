@@ -12,7 +12,7 @@ function buildTaskRecord(payload) {
   return {
     id: createId(),
     title: payload.title,
-    status: payload.status,
+    completed: payload.completed,
     createdAt: now,
     updatedAt: now,
   };
@@ -37,7 +37,7 @@ async function createTask(payload) {
   const tasks = await readJsonArray(TASKS_FILE_PATH);
   const newTask = buildTaskRecord({
     ...payload,
-    status: payload.status ?? "todo",
+    completed: payload.completed ?? false,
   });
   tasks.push(newTask);
   await writeJsonArray(TASKS_FILE_PATH, tasks);

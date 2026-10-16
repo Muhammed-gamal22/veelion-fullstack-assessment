@@ -1,5 +1,6 @@
 import type { Task } from "@/types/api";
 import { TaskItem } from "@/components/tasks/TaskItem";
+import CustomEmptyBox from "@/customs/CustomEmptyBox";
 
 type TaskListProps = {
   tasks: Task[];
@@ -10,15 +11,16 @@ type TaskListProps = {
 export function TaskList({ tasks, updatingTaskId, onToggle }: TaskListProps) {
   if (tasks.length === 0) {
     return (
-      <section className="card" style={{ padding: "3rem 1.5rem", textAlign: "center" }}>
-        <div style={{ fontSize: "2.5rem", marginBottom: "0.75rem" }}>📭</div>
-        <p style={{ margin: 0, color: "var(--muted)", fontWeight: 500 }}>
-          No tasks match this filter.
-        </p>
-        <p style={{ margin: "0.35rem 0 0", color: "var(--muted)", fontSize: "0.85rem" }}>
-          Try changing the filter above.
-        </p>
-      </section>
+      <CustomEmptyBox title=" No tasks match this filter." desc="Try changing the filter above." />
+      // <section className="card" style={{ padding: "3rem 1.5rem", textAlign: "center" }}>
+      //   <div style={{ fontSize: "2.5rem", marginBottom: "0.75rem" }}>📭</div>
+      //   <p style={{ margin: 0, color: "var(--muted)", fontWeight: 500 }}>
+      //     No tasks match this filter.
+      //   </p>
+      //   <p style={{ margin: "0.35rem 0 0", color: "var(--muted)", fontSize: "0.85rem" }}>
+      //     Try changing the filter above.
+      //   </p>
+      // </section>
     );
   }
 
@@ -42,7 +44,6 @@ export function TaskList({ tasks, updatingTaskId, onToggle }: TaskListProps) {
           <TaskItem
             key={task.id}
             task={task}
-            tasks={tasks}
             busy={updatingTaskId === task.id}
             onToggle={onToggle}
           />

@@ -1,26 +1,20 @@
 import { getReportsFromBackend } from '@/lib/backendApi';
-import { ReportResponse } from '@/types/api';
-
+import StatusCard from './StatusCard';
+import { Status } from '@/types/types';
+import StatusChart from './StatusChart';
+import RecentActivityCard from './RecentActivityCard';
+import CustomEmptyBox from '@/customs/CustomEmptyBox';
 const Report = async () => {
+
     const report = await getReportsFromBackend();
 
     if (!report) {
         return (
-            <div style={{ padding: '1.5rem 0' }}>
-                <h2 style={{ margin: 0, fontSize: '1.1rem' }}>
-                    No Report Data
-                </h2>
-                <p style={{ color: 'var(--muted)', marginBottom: 0 }}>
-                    Unable to retrieve report statistics. Please try again later.
-                </p>
-            </div>
+            <CustomEmptyBox title='No Report Data' desc='Unable to retrieve report statistics. Please try again later.' />
         );
     }
-
     const { totalTasks, tasksByStatus, recentActivityCount } = report;
-
-
-    const stats = [
+    const stats: Status[] = [
         {
             label: 'Total Tasks',
             value: totalTasks,
@@ -76,52 +70,13 @@ const Report = async () => {
                 aria-label="Task statistics"
             >
                 {stats.map((stat) => (
-                    <article
-                        key={stat.label}
-                        className="card"
-                        style={{
-                            padding: '1.25rem',
-                            borderTop: `3px solid ${stat.color}`,
-                        }}
-                    >
-                        <p
-                            style={{
-                                color: 'var(--muted)',
-                                fontSize: '0.85rem',
-                                margin: '0 0 0.75rem',
-                            }}
-                        >
-                            {stat.label}
-                        </p>
-
-                        <p
-                            style={{
-                                fontSize: '2rem',
-                                fontWeight: 800,
-                                color: stat.color,
-                                margin: 0,
-                                lineHeight: 1.2,
-                            }}
-                        >
-                            {stat.value}
-                        </p>
-
-                        <p
-                            style={{
-                                color: 'var(--muted)',
-                                fontSize: '0.75rem',
-                                margin: '0.75rem 0 0',
-                            }}
-                        >
-                            {stat.description}
-                        </p>
-                    </article>
+                    <StatusCard key={stat.label} stat={stat} />
                 ))}
             </section>
 
-
-
-
+            <section className='stack'>
+                <RecentActivityCard recentActivityCount={recentActivityCount} />
+            </section>
 
             <section className="card" style={{ padding: '1.5rem' }}>
                 <div style={{ marginBottom: '1.5rem' }}>
@@ -139,56 +94,15 @@ const Report = async () => {
                     </p>
                 </div>
 
+
                 <div className="stack" style={{ gap: '1.4rem' }}>
                     {statusBreakdown.map((item) => {
-                        const percentage =
-                            totalTasks > 0
-                                ? Math.round((item.value / totalTasks) * 100)
-                                : 0;
-
                         return (
-                            <div key={item.label}>
-                                <div
-                                    style={{
-                                        display: 'flex',
-                                        justifyContent: 'space-between',
-                                        alignItems: 'center',
-                                        gap: '1rem',
-                                        marginBottom: '0.6rem',
-                                        fontSize: '0.85rem',
-                                    }}
-                                >
-                                    <span style={{ fontWeight: 600 }}>
-                                        {item.label}
-                                    </span>
-
-                                    <span style={{ color: 'var(--muted)' }}>
-                                        {item.value} tasks · {percentage}%
-                                    </span>
-                                </div>
-
-                                <div
-                                    style={{
-                                        height: '8px',
-                                        borderRadius: '999px',
-                                        background: 'var(--surface-2)',
-                                        overflow: 'hidden',
-                                    }}
-                                >
-                                    <div
-                                        style={{
-                                            width: `${percentage}%`,
-                                            height: '100%',
-                                            borderRadius: '999px',
-                                            background: item.color,
-                                            transition: 'width 0.3s ease',
-                                        }}
-                                    />
-                                </div>
-                            </div>
+                            <StatusChart key={item.label} item={item} totalTasks={totalTasks} />
                         );
                     })}
                 </div>
+
             </section>
         </div>
     );

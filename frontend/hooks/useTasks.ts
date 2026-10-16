@@ -13,13 +13,7 @@ export function useTasks() {
   const [isCreatingTask, setIsCreatingTask] = useState(false)
   const [titleTouched, setTitleTouched] = useState(false);
   const [addNewTaskModal, setAddNewTaskModal] = useState(false);
-  const [taskFormData, setTaskFormData] = useState<{
-    title: string;
-    status: string;
-  }>({
-    title: "",
-    status: "todo",
-  })
+
 
   const fetchTasks = useCallback(async () => {
     try {
@@ -38,14 +32,14 @@ export function useTasks() {
     }
   }, []);
 
-  const updateTaskStatus = useCallback(async (taskId: string, status: "todo" | "in-progress" | "done") => {
+  const updateTaskStatus = useCallback(async (taskId: string, completed: boolean) => {
     try {
       setUpdatingTaskId(taskId);
       setError("");
 
       const body = await requestJson<TaskResponse>(`/api/tasks/${taskId}`, {
         method: "PATCH",
-        body: JSON.stringify({ status }),
+        body: JSON.stringify({ completed }),
       });
 
       setTasks((previous) =>
@@ -63,58 +57,19 @@ export function useTasks() {
   }, [fetchTasks]);
 
   const filteredTasks = useMemo(() => {
-    if (filter === "done") {
-      return tasks.filter((task) => task.status === "done");
+    if (filter === "completed") {
+      return tasks.filter((task) => task.completed);
     }
 
-    if (filter === "todo") {
-      return tasks.filter((task) => task.status === "todo");
+    if (filter === "pending") {
+      return tasks.filter((task) => !task.completed);
     }
 
-    if (filter === "in-progress") {
-      return tasks.filter((task) => task.status === "in-progress");
-    }
 
     return tasks;
   }, [tasks, filter]);
 
-  const addNewTask = async () => {
-    if (!taskFormData.title.trim()) {
-      setTitleTouched(true);
-      return;
-    }
 
-    try {
-      setIsCreatingTask(true);
-      const res = await fetch('/api/tasks', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(taskFormData),
-      });
-
-      if (!res.ok) {
-        const body = await res.json();
-        setError(body.error?.message || "Failed to create task");
-      }
-
-      await res.json();
-
-      setTaskFormData({
-        title: '',
-        status: 'todo',
-      });
-      setTitleTouched(false);
-      setAddNewTaskModal(false);
-      setIsCreatingTask(false);
-      fetchTasks();
-    } catch (error) {
-      setError(getErrorMessage(error, "Failed to create task"));
-    } finally {
-      setIsCreatingTask(false);
-    }
-  }
 
   return {
     tasks,
@@ -123,17 +78,8 @@ export function useTasks() {
     loading,
     error,
     updatingTaskId,
-    addNewTaskModal,
-    taskFormData,
-    titleTouched,
-    isCreatingTask,
-    setTitleTouched,
-    setAddNewTaskModal,
-    setTaskFormData,
-    setIsCreatingTask,
     setFilter,
     fetchTasks,
     updateTaskStatus,
-    addNewTask,
   };
 }

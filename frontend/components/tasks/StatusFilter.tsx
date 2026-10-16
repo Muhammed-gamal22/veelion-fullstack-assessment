@@ -1,16 +1,13 @@
 import type { TaskFilter } from "@/types/api";
+import { StatusFilterProps } from "@/types/types";
 
 const FILTERS: Array<{ label: string; value: TaskFilter; icon: string }> = [
   { label: "All", value: "all", icon: "◈" },
-  { label: "In Progress", value: "in-progress", icon: "⟳" },
-  { label: "Done", value: "done", icon: "✓" },
-  { label: "Todo", value: "todo", icon: "○" },
+  { label: "Pending", value: "pending", icon: "⟳" },
+  { label: "Completed", value: "completed", icon: "✓" },
 ];
 
-type StatusFilterProps = {
-  value: TaskFilter;
-  onChange: (value: TaskFilter) => void;
-};
+
 
 export function StatusFilter({ value, onChange }: StatusFilterProps) {
   return (

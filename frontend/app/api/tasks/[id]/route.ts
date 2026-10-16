@@ -9,16 +9,16 @@ type RouteParams = {
 
 export async function PATCH(request: Request, { params }: RouteParams) {
   try {
-    const payload = (await request.json()) as { status: "todo" | "in_progress" | "done" };
+    const payload = (await request.json()) as { completed?: boolean };
 
-    if (!["todo", "in_progress", "done"].includes(payload.status || "")) {
+    if (typeof payload.completed !== "boolean") {
       return NextResponse.json(
-        { error: { message: "status must be one of: todo, in_progress, done" } },
+        { error: { message: "completed must be boolean" } },
         { status: 400 }
       );
     }
 
-    const task = await updateTaskInBackend(params.id, payload.status);
+    const task = await updateTaskInBackend(params.id, payload.completed);
     return NextResponse.json({ data: task }, { status: 200 });
   } catch (error) {
     return NextResponse.json(

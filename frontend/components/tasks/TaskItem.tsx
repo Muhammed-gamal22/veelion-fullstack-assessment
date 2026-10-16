@@ -1,15 +1,9 @@
 import type { Task } from "@/types/api";
+import { TaskItemProps } from "@/types/types";
 
-type TaskItemProps = {
-  task: Task;
-  busy: boolean;
-  onToggle: (task: Task) => void;
-  tasks: Task[];
-};
 
-export function TaskItem({ task, tasks, busy, onToggle }: TaskItemProps) {
-  const taskStatus = tasks.filter((t) => t.status !== task.status)
-  console.log(taskStatus)
+
+export function TaskItem({ task, busy, onToggle }: TaskItemProps) {
   return (
     <li
       className="card"
@@ -35,9 +29,9 @@ export function TaskItem({ task, tasks, busy, onToggle }: TaskItemProps) {
               width: "10px",
               height: "10px",
               borderRadius: "50%",
-              background: task.status === "done" ? "var(--success)" : "var(--warning)",
+              background: task.completed ? "var(--success)" : "var(--warning)",
               flexShrink: 0,
-              boxShadow: task.status === "done"
+              boxShadow: task.completed
                 ? "0 0 8px rgba(62, 207, 142, 0.5)"
                 : "0 0 8px rgba(245, 158, 11, 0.5)",
             }}
@@ -48,8 +42,8 @@ export function TaskItem({ task, tasks, busy, onToggle }: TaskItemProps) {
               fontWeight: 600,
               fontSize: "0.95rem",
               letterSpacing: "-0.01em",
-              textDecoration: task.status === "done" ? "line-through" : "none",
-              color: task.status === "done" ? "var(--muted)" : "var(--text)",
+              textDecoration: task.completed ? "line-through" : "none",
+              color: task.completed ? "var(--muted)" : "var(--text)",
               transition: "color 0.2s ease",
             }}
           >
@@ -57,8 +51,8 @@ export function TaskItem({ task, tasks, busy, onToggle }: TaskItemProps) {
           </p>
         </div>
 
-        <span className={`badge ${task.status === "done" ? "done" : "todo"}`}>
-          {task.status === "done" ? "Done" : "Todo"}
+        <span className={`badge ${task.completed ? "done" : "todo"}`}>
+          {task.completed ? "Completed" : "Pending"}
         </span>
       </div>
 
@@ -69,10 +63,10 @@ export function TaskItem({ task, tasks, busy, onToggle }: TaskItemProps) {
       <div style={{ paddingLeft: "1.65rem" }}>
         <button
           type="button"
-          className={`button${task.status === "done" ? "" : " primary"}`}
+          className={`button${task.completed ? "" : " primary"}`}
           onClick={() => onToggle(task)}
           disabled={busy}
-          aria-label={`Mark ${task.title} as ${task.status === "done" ? "todo" : "done"}`}
+          aria-label={`Mark ${task.title} as ${task.completed ? "todo" : "done"}`}
           style={{ fontSize: "0.82rem" }}
         >
           {busy ? (
@@ -90,10 +84,10 @@ export function TaskItem({ task, tasks, busy, onToggle }: TaskItemProps) {
               />
               Saving…
             </>
-          ) : task.status === "done" ? (
-            "↩ Mark as todo"
+          ) : task.completed ? (
+            "↩ Mark as pending"
           ) : (
-            "✓ Mark as done"
+            "✓ Mark as completed"
           )}
         </button>
         <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
