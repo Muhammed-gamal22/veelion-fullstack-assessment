@@ -12,7 +12,7 @@ export type ActivityHeaderProps = {
 }
 export type ActivityListProps = {
     item: ActivityLog,
-    allActivity: ActivityLog[]
+    isLast: boolean,
     idx: number
 }
 export type ActivityStatsProps = {

@@ -1,7 +1,7 @@
 import { ActivityListProps } from '@/types/types';
 import React from 'react'
 
-const ActivityList = ({ item, allActivity, idx }: ActivityListProps) => {
+const ActivityList = ({ item, isLast, idx }: ActivityListProps) => {
     function formatTime(value: string) {
         return new Date(value).toLocaleString();
     }
@@ -9,7 +9,7 @@ const ActivityList = ({ item, allActivity, idx }: ActivityListProps) => {
         <li
             key={item.id}
             style={{
-                borderBottom: idx < allActivity.length - 1 ? "1px solid var(--border)" : "none",
+                borderBottom: !isLast ? "1px solid var(--border)" : "none",
                 padding: "0.9rem 0.25rem",
                 display: "grid",
                 gap: "0.25rem",

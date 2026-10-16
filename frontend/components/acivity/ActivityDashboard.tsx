@@ -27,7 +27,10 @@ const ActivityDashboard = () => {
                             <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "grid", gap: "0" }}>
                                 {shownActivity.map((item, idx) => {
                                     return (
-                                        <ActivityList idx={idx} allActivity={allActivity} item={item} />
+                                        <ActivityList
+                                            key={item.id} idx={idx}
+                                            isLast={idx === shownActivity.length - 1}
+                                            item={item} />
                                     )
                                 })}
                             </ul>
